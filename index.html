@@ -16,9 +16,9 @@
 
   <script type="text/ng-template" id="/home.html">
     <div class="page-header">
-      <h1>Gracious Guest News</h1>
+      <h1>Gracious Guest Events</h1>
     </div>
-    
+
     <div ng-repeat="event in events">
       <a ng-show="event.link" href="{{event.link}}">
         {{event.title}}
@@ -26,6 +26,11 @@
       <span ng-hide="event.link">
         {{event.title}}
       </span>
+
+      <span>
+        <a href="#/events/{{ $index }}">Comments</a>
+      </span>
+      <!-- Find index of the array we are iterating through -->
     </div>
 
     <!-- Create a form that executes our addEvent $scope function -->
@@ -36,6 +41,37 @@
       <br>
       <button type="submit">Post</button>
     </form>
+    </script>
+
+    <script type="text/ng-template" id="/events.html">
+      <div class="page-header">
+        <h3>
+          <a ng-show="event.link" href="{{event.link}}">
+            {{event.title}}
+          </a>
+          <span ng-hide="event.link">
+            {{event.title}}
+          </span>
+        </h3>
+      </div>
+
+      <div ng-repeat="comment in event.comments">
+        {{comment.upvotes}} - by {{comment.author}}
+        <span style="font-size:20px; margin-left:10px;">
+          {{comment.body}}
+        </span>
+      </div>
+
+      <form ng-submit="addComment()" style="margin-top:30px;">
+        <h3>Add a new comment</h3>
+
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Comment" ng-model="body"></input>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Post</button>
+      </form>
+
     </script>
 
   </body>
