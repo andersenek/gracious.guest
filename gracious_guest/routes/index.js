@@ -29,13 +29,13 @@ router.post('/events', function(req, res, next) { // Post route for events
 });
 
 router.param('event', function(req, res, next, id) {
-  var query = Event.findById(id);
+  var query = Event.findById(id); // Query DB to find post by id
 
-  query.exec(function (err, event){
+  query.exec(function (err, event){ // Return event
     if (err) { return next(err); }
     if (!event) { return next(new Error('can\'t find event')); }
 
-    req.event = event;
+    req.event = event; // If event is there, set the event
     return next();
   });
 });
@@ -46,21 +46,19 @@ router.param('comment', function(req, res, next, id) {
 
   query.exec(function (err, comment){
     if (err) { return next(err); }
-    if (!comment) { return next(new Error('can\'t find event')); }
+    if (!comment) { return next(new Error('can\'t find comment')); }
 
     req.comment = comment;
     return next();
   });
 });
 
+// Show an event and comments
 router.get('/events/:event', function(req, res) {
   req.event.populate('comments', function(err, event) { // Populate event with comments
-    if (err) { return next(err); }
-
     res.json(event);
   });
 });
-
 
 router.post('/events/:event/comments', function(req, res, next) {
   var comment = new Comment(req.body);
