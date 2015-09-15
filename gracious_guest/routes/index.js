@@ -94,6 +94,15 @@ router.param('comment', function(req, res, next, id) {
   });
 });
 
+router.delete('/events/:id', function(req, res){
+    console.log("Deleting");
+    Event.findById( req.params.id, function ( err, event ){
+        event.remove( function ( err, event ){
+            res.render('/events');
+        });
+    });
+});
+
 // Show an event and comments
 router.get('/events/:event', function(req, res) {
   req.event.populate('comments', function(err, event) { // Populate event with comments

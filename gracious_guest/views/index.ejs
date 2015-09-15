@@ -28,14 +28,14 @@
     </div>
 
     <div ng-repeat="event in events">
+    <span class='delete' ng-click="deleteEvent(event)">(x)</span>
+
+      by {{event.author}}
       <a ng-show="event.link" href="{{event.link}}">
         {{event.title}}
       </a>
       <span ng-hide="event.link">
         {{event.title}}
-      </span>
-      <span ng-show="event.author">
-        posted by <a>{{event.author}}</a> |
       </span>
 
       <span>
@@ -61,7 +61,7 @@
 
     <script type="text/ng-template" id="/events.html">
       <div class="page-header">
-        <h3>
+        <h3>    <span class='delete' ng-click="deleteEvent(event._id)">(delete)</span>
           <a ng-show="event.link" href="{{event.link}}">
             {{event.title}}
           </a>

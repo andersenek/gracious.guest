@@ -18,7 +18,6 @@ app.config([
           }]
         }
       })
-
       .state('events', {
         url: '/events/{id}',
         templateUrl: '/events.html',
@@ -127,16 +126,12 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
   };
 
   o.createEvent = function(newEvent) {
-    console.log(newEvent)
-    console.log(o.events)
-    console.log(auth.getToken())
     return $http.post('/events', newEvent, {
       headers: {Authorization: 'Bearer '+auth.getToken()} // Pass in header with token
     }).success(function(data){ // Post to server
       o.events.push(data); // Add data to our event array
     }).error(function(data){
       console.log("this isn't working")
-      console.log(data)
     });
   };
 
@@ -202,15 +197,25 @@ app.controller('MainCtrl', [
       $scope.link = ''; // Set area to empty when done
     };
 
+    $scope.deleteEvent = function(event) {
+      console.log(event)
+      console.log(event._id)
+      var index = $scope.events.indexOf(event);
+      console.log(index)
+      $scope.events.splice(index, 1);
+    }
+
+
 }]); // End MainCtrl controller
 
 app.controller('EventsCtrl', [
   '$scope',
-  'events', // Need access events so we can retreive the ID
-  'event', // To access an event from state
+  '$state', // Need access events so we can retreive the ID
+  'events', // To access an event from state
+  'event',
   'auth',
 
-  function($scope, events, event, auth){
+  function($scope, $state, events, event, auth){
 
     $scope.event = event;
     $scope.isLoggedIn = auth.isLoggedIn;
@@ -227,6 +232,7 @@ app.controller('EventsCtrl', [
       });
       $scope.body = ''; // Set area to empty when done
     };
+
 
 }]); // End EventsCtrl controller
 
