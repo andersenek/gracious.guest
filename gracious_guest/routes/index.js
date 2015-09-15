@@ -60,8 +60,8 @@ router.get('/events', function(req, res, next) { // Get route for all events
 
 router.post('/events', auth, function(req, res, next) { // Post route for events
   var event = new Event(req.body);
-  post.author = req.payload.username;
-  
+  event.author = req.payload.username;
+
   event.save(function(err, event){ // Event that is saved
     if(err){ return next(err); } // Or return error
 

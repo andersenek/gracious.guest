@@ -28,6 +28,26 @@ app.config([
             return events.get($stateParams.id);
           }]
         }
+      })
+      .state('login', {
+        url: '/login',
+        templateUrl: '/login.html',
+        controller: 'AuthCtrl',
+        onEnter: ['$state', 'auth', function($state, auth){ // Check auth factory
+          if(auth.isLoggedIn()){
+            $state.go('home');
+          }
+        }]
+      })
+      .state('register', {
+        url: '/register',
+        templateUrl: '/register.html',
+        controller: 'AuthCtrl',
+        onEnter: ['$state', 'auth', function($state, auth){
+          if(auth.isLoggedIn()){
+            $state.go('home');
+          }
+        }]
       });
 
     $urlRouterProvider.otherwise('home'); // Redirect to home
@@ -35,21 +55,20 @@ app.config([
 }]); // End app.config
 
 // Factories
-
 app.factory('auth', ['$http', '$window', function($http, $window){
+
   var auth = {};
 
-  auth.saveToken = function (token){
+  auth.saveToken = function(token){
     $window.localStorage['gracious-guest-token'] = token; // Access window because this is where localStorage key will be // * Don't change or else everyone will be logged out
   };
 
-  auth.getToken = function (){
+  auth.getToken = function(){
     return $window.localStorage['gracious-guest-token'];
-  }
+  };
 
   auth.isLoggedIn = function(){
     var token = auth.getToken();
-
     if(token){ // If the token is there
       var payload = JSON.parse($window.atob(token.split('.')[1])); // We want to parse the payload
 
@@ -77,6 +96,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
   auth.logIn = function(user){ // Take user object
     return $http.post('/login', user).success(function(data){ // Pass in with login
       auth.saveToken(data.token); // Save if successful
+      console.log(data.token)
     });
   };
 
@@ -88,7 +108,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 
 }]);
 
-app.factory('events', ['$http', function($http){ // Inject http and pass in function
+app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http and pass in function
 
   var o = {
     events: []
@@ -105,14 +125,25 @@ app.factory('events', ['$http', function($http){ // Inject http and pass in func
       angular.copy(data, o.events); // Copies data to event
     });
   };
-  o.create = function(event) {
-    return $http.post('/events', event).success(function(data){ // Post to server
-      o.events.push(data); // Add data to our post array
+
+  o.createEvent = function(newEvent) {
+    console.log(newEvent)
+    console.log(o.events)
+    console.log(auth.getToken())
+    return $http.post('/events', newEvent, {
+      headers: {Authorization: 'Bearer '+auth.getToken()} // Pass in header with token
+    }).success(function(data){ // Post to server
+      o.events.push(data); // Add data to our event array
+    }).error(function(data){
+      console.log("this isn't working")
+      console.log(data)
     });
   };
 
   o.addComment = function(id, comment) {
-    return $http.post('/events/' + id + '/comments', comment);
+    return $http.post('/events/' + id + '/comments', comment, {
+      headers: {Authorization: 'Bearer '+auth.getToken()}
+    });
   };
 
   return o;
@@ -121,39 +152,68 @@ app.factory('events', ['$http', function($http){ // Inject http and pass in func
 
 // Controllers
 
+app.controller('AuthCtrl', [
+  '$scope',
+  '$state',
+  'auth',
+
+  function($scope, $state, auth){
+    $scope.user = {};
+
+    $scope.register = function(){
+      auth.register($scope.user).error(function(error){
+        $scope.error = error;
+      }).then(function(){
+        $state.go('home');
+      });
+    };
+
+    $scope.logIn = function(){
+      auth.logIn($scope.user).error(function(error){
+        $scope.error = error;
+      }).then(function(){
+        $state.go('home');
+      });
+    };
+}]);
+
 // Create a new controller for index.html
 app.controller('MainCtrl', [
   '$scope',
   'events',
+  'auth',
 
-  function($scope, events){
+  function($scope, events, auth){
 
     $scope.events = events.events; // Bind the $scope.events variable in our controller to the events array in our service
+    $scope.isLoggedIn = auth.isLoggedIn;
 
     $scope.addEvent = function(){ // Allow user to add a event
       if(!$scope.title || $scope.title === '') {  // Prevent the user from entering a blank title
         return;
       }
-
-      events.create({
+      events.createEvent({
         title: $scope.title,
         link: $scope.link,
+        author: 'user',
       });
 
       $scope.title = ''; // Set area to empty when done
       $scope.link = ''; // Set area to empty when done
     };
 
-  }]); // End MainCtrl controller
+}]); // End MainCtrl controller
 
 app.controller('EventsCtrl', [
   '$scope',
   'events', // Need access events so we can retreive the ID
   'event', // To access an event from state
+  'auth',
 
-  function($scope, events, event){
+  function($scope, events, event, auth){
 
     $scope.event = event;
+    $scope.isLoggedIn = auth.isLoggedIn;
 
     $scope.addComment = function(){
       if($scope.body === '') { // Prevent the user from entering a blank body
@@ -169,3 +229,13 @@ app.controller('EventsCtrl', [
     };
 
 }]); // End EventsCtrl controller
+
+app.controller('NavCtrl', [
+  '$scope',
+  'auth',
+
+  function($scope, auth){
+    $scope.isLoggedIn = auth.isLoggedIn;
+    $scope.currentUser = auth.currentUser;
+    $scope.logOut = auth.logOut;
+}]); // End NavCtrl
