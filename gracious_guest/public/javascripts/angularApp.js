@@ -1,5 +1,6 @@
 var app = angular.module('graciousGuest', ['ui.router']);
 
+// Routes
 app.config([
   '$stateProvider',
   '$urlRouterProvider',
@@ -33,6 +34,60 @@ app.config([
 
 }]); // End app.config
 
+// Factories
+
+app.factory('auth', ['$http', '$window', function($http, $window){
+  var auth = {};
+
+  auth.saveToken = function (token){
+    $window.localStorage['gracious-guest-token'] = token; // Access window because this is where localStorage key will be // * Don't change or else everyone will be logged out
+  };
+
+  auth.getToken = function (){
+    return $window.localStorage['gracious-guest-token'];
+  }
+
+  auth.isLoggedIn = function(){
+    var token = auth.getToken();
+
+    if(token){ // If the token is there
+      var payload = JSON.parse($window.atob(token.split('.')[1])); // We want to parse the payload
+
+      return payload.exp > Date.now() / 1000;
+    } else {
+      return false;
+    }
+  };
+
+  auth.currentUser = function(){
+    if(auth.isLoggedIn()){
+      var token = auth.getToken();
+      var payload = JSON.parse($window.atob(token.split('.')[1]));
+
+      return payload.username;
+    }
+  };
+
+  auth.register = function(user){ // Take user object in form
+    return $http.post('/register', user).success(function(data){ // Return post request with $http
+      auth.saveToken(data.token); // On sucess, save the token
+    });
+  };
+
+  auth.logIn = function(user){ // Take user object
+    return $http.post('/login', user).success(function(data){ // Pass in with login
+      auth.saveToken(data.token); // Save if successful
+    });
+  };
+
+  auth.logOut = function(){
+    $window.localStorage.removeItem('gracious-guest-token');
+  };
+
+  return auth;
+
+}]);
+
 app.factory('events', ['$http', function($http){ // Inject http and pass in function
 
   var o = {
@@ -63,6 +118,8 @@ app.factory('events', ['$http', function($http){ // Inject http and pass in func
   return o;
   // End Service Body
 }]);
+
+// Controllers
 
 // Create a new controller for index.html
 app.controller('MainCtrl', [

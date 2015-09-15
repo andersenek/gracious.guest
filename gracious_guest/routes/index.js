@@ -1,5 +1,7 @@
 var express = require('express');
+var jwt = require('express-jwt'); // Requite JWT
 var router = express.Router();
+var auth = jwt({secret: 'SECRET', userProperty: 'payload'}); // Should be an ENV variable to match Users.js
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -7,8 +9,46 @@ router.get('/', function(req, res, next) {
 });
 
 var mongoose = require('mongoose'); // To access our DB
+var passport = require('passport'); // Require Passport
 var Event = mongoose.model('Event'); // Event Model
 var Comment = mongoose.model('Comment'); // Comment Model
+var User = mongoose.model('User'); // User Model
+
+// User Route
+router.post('/register', function(req, res, next){
+  if(!req.body.username || !req.body.password){
+    return res.status(400).json({message: 'Please fill out all fields'});
+  }
+
+  var user = new User();
+
+  user.username = req.body.username;
+
+  user.setPassword(req.body.password)
+
+  user.save(function (err){
+    if(err){ return next(err); }
+
+    return res.json({token: user.generateJWT()}) // JWT generates when user is registered
+  });
+});
+
+// User Login Route
+router.post('/login', function(req, res, next){
+  if(!req.body.username || !req.body.password){
+    return res.status(400).json({message: 'Please fill out all fields'});
+  }
+
+  passport.authenticate('local', function(err, user, info){
+    if(err){ return next(err); }
+
+    if(user){
+      return res.json({token: user.generateJWT()});
+    } else {
+      return res.status(401).json(info);
+    }
+  })(req, res, next);
+});
 
 router.get('/events', function(req, res, next) { // Get route for all events
   Event.find(function(err, events){
@@ -18,9 +58,10 @@ router.get('/events', function(req, res, next) { // Get route for all events
   });
 });
 
-router.post('/events', function(req, res, next) { // Post route for events
+router.post('/events', auth, function(req, res, next) { // Post route for events
   var event = new Event(req.body);
-
+  post.author = req.payload.username;
+  
   event.save(function(err, event){ // Event that is saved
     if(err){ return next(err); } // Or return error
 
@@ -60,9 +101,10 @@ router.get('/events/:event', function(req, res) {
   });
 });
 
-router.post('/events/:event/comments', function(req, res, next) {
+router.post('/events/:event/comments', auth, function(req, res, next) {
   var comment = new Comment(req.body);
   comment.event = req.event;
+  comment.author = req.payload.username;
 
   comment.save(function(err, comment){
     if(err){ return next(err); }
