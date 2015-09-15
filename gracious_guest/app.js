@@ -5,9 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose'); // Require mongoose for our DB
+var passport = require('passport'); // Require passport for users
 
 require('./models/Events'); // Require Event Model
 require('./models/Comments'); // Require Comments Model
+require('./models/Users'); // Require Users Model
+
+require('./config/passport'); // Require config passport.js
+
 mongoose.connect('mongodb://localhost/news'); // DB path
 
 
@@ -27,6 +32,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(passport.initialize()); // Initialize Passport for users
 
 app.use('/', routes);
 app.use('/users', users);
