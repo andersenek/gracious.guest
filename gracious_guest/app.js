@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose'); // Require mongoose for our DB
 var passport = require('passport'); // Require passport for users
+var methodOverride  = require('method-override');
 
 require('./models/Events'); // Require Event Model
 require('./models/Comments'); // Require Comments Model
@@ -13,7 +14,7 @@ require('./models/Users'); // Require Users Model
 
 require('./config/passport'); // Require config passport.js
 
-mongoose.connect('mongodb://localhost/news'); // DB path
+mongoose.connect('mongodb://localhost/events'); // DB path
 
 
 var routes = require('./routes/index');
@@ -34,6 +35,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(passport.initialize()); // Initialize Passport for users
+app.use(methodOverride()); // Initialized method override
 
 app.use('/', routes);
 app.use('/users', users);

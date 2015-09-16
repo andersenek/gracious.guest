@@ -135,7 +135,21 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
     });
   };
 
+  o.deleteEvent = function(event) {
+    console.log("trying to delete")
+    console.log(event)
+    console.log(o.events)
+    var index = o.events.indexOf(event);
+    console.log(index)
+    return $http.delete('/events/' + event._id).success(function(event){ // Post to server
+      o.events.splice(index, 1); // Remove data from our event array
+    }).error(function(event){
+      console.log("this isn't working")
+    });
+  }
+
   o.addComment = function(id, comment) {
+    console.log(comment)
     return $http.post('/events/' + id + '/comments', comment, {
       headers: {Authorization: 'Bearer '+auth.getToken()}
     });
@@ -189,7 +203,8 @@ app.controller('MainCtrl', [
       }
       events.createEvent({
         title: $scope.title,
-        link: $scope.link,
+        location: $scope.location,
+        date: $scope.date,
         author: 'user',
       });
 
@@ -197,13 +212,20 @@ app.controller('MainCtrl', [
       $scope.link = ''; // Set area to empty when done
     };
 
+    // $scope.deleteEvent = function(event) {
+    //   console.log(event)
+    //   console.log(event._id)
+    //   var index = $scope.events.indexOf(event);
+    //   console.log(index)
+    //   $scope.events.splice(index, 1);
+    // }
+
     $scope.deleteEvent = function(event) {
       console.log(event)
       console.log(event._id)
-      var index = $scope.events.indexOf(event);
-      console.log(index)
-      $scope.events.splice(index, 1);
+      events.deleteEvent(event)
     }
+
 
 
 }]); // End MainCtrl controller

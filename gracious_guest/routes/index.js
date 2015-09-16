@@ -94,13 +94,18 @@ router.param('comment', function(req, res, next, id) {
   });
 });
 
-router.delete('/events/:id', function(req, res){
-    console.log("Deleting");
-    Event.findById( req.params.id, function ( err, event ){
-        event.remove( function ( err, event ){
-            res.render('/events');
-        });
+// Delete an event
+router.delete('/events/:event', function (req, res){
+  return Event.findById(req.params.id, function (err, event) {
+    return event.remove(function (err) {
+      if (!err) {
+        console.log("removed");
+        return res.send('');
+      } else {
+        console.log(err);
+      }
     });
+  });
 });
 
 // Show an event and comments

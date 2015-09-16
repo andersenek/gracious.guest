@@ -3,7 +3,9 @@ var mongoose = require('mongoose'); // To access mongoose in this file we need t
 
 var EventSchema = new mongoose.Schema({
   title: String,
-  link: String,
+  location: String,
+  date: String,
+  author: String,
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] // Reference comments attached to this post id, uses 'Comment' model to make this work
 });
 

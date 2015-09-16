@@ -1,147 +1,379 @@
 <html>
-  <head>
-    <title>Gracious Guest App</title>
-    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+<head>
 
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
-    <script src="/javascripts/angularApp.js"></script>
-  </head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>The Gracious Guest</title>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="stylesheets/bootstrap.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link href="stylesheets/stylish-portfolio.css" rel="stylesheet">
+
+  <!-- Custom Fonts -->
+  <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
+  <script src="/javascripts/angularApp.js"></script>
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+</head>
   <body ng-app="graciousGuest">
-  <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
-    <ul class="nav navbar-nav">
-      <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
-      <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
-      <li ng-hide="isLoggedIn()"><a href="/#/login">Log In</a></li>
-      <li ng-hide="isLoggedIn()"><a href="/#/register">Register</a></li>
-    </ul>
-  </nav>
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <ui-view></ui-view>
-    </div>
-  </div>
-
-  <script type="text/ng-template" id="/home.html">
-    <div class="page-header">
-      <h1>Gracious Guest Events</h1>
-    </div>
-
-    <div ng-repeat="event in events">
-    <span class='delete' ng-click="deleteEvent(event)">(x)</span>
-
-      by {{event.author}}
-      <a ng-show="event.link" href="{{event.link}}">
-        {{event.title}}
-      </a>
-      <span ng-hide="event.link">
-        {{event.title}}
-      </span>
-
-      <span>
-        <a href="#/events/{{ event._id }}">Comments</a>
-      </span>
-      <!-- Find index of the array we are iterating through -->
-    </div>
-
-    <!-- Create a form that executes our addEvent $scope function -->
-    <form ng-show="isLoggedIn()" ng-submit="addEvent()" style="margin-top:30px;">
-      <input type="text" placeholder="Title" ng-model="title"></input>
-      <br>
-      <input type="text" placeholder="Link" ng-model="link"></input>
-      <br>
-      <button type="submit">Post</button>
-    </form>
-
-    <div ng-hide="isLoggedIn()">
-      <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add an event.</h3>
-    </div>
-
-    </script>
-
-    <script type="text/ng-template" id="/events.html">
-      <div class="page-header">
-        <h3>    <span class='delete' ng-click="deleteEvent(event._id)">(delete)</span>
-          <a ng-show="event.link" href="{{event.link}}">
-            {{event.title}}
-          </a>
-          <span ng-hide="event.link">
-            {{event.title}}
-          </span>
-          <span ng-show="event.author">
-            posted by <a>{{event.author}}</a> |
-          </span>
-        </h3>
-      </div>
-
-      <div ng-repeat="comment in event.comments">
-          by {{comment.author}}
-        <span style="font-size:20px; margin-left:10px;">
-          {{comment.body}}
-        </span>
-      </div>
-
-      <form ng-submit="addComment()" style="margin-top:30px;" ng-show="isLoggedIn()">
-        <h3>Add a new comment</h3>
-
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Comment" ng-model="body"></input>
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top" ng-controller="NavCtrl">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        <a class="navbar-brand page-scroll" href="#home">The Gracious Guest</a>
         </div>
 
-        <button type="submit" class="btn btn-primary">Post</button>
-      </form>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="hidden"><a href="#page-top" id="page-top"></a></li>
 
-      <div ng-hide="isLoggedIn()">
-        <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a comment.</h3>
+            <li><a class="page-scroll" href="#about">About</a></li>
+            <li><a class="page-scroll" href="#services">How To</a></li>
+            <li><a class="page-scroll" href="#events">Events</a></li>
+            <li><a class="page-scroll" href="#contact">Contact</a></li>
+
+            <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
+            <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
+            <li ng-hide="isLoggedIn()"><a href="/#/login">Log In</a></li>
+            <li ng-hide="isLoggedIn()"><a href="/#/register">Register</a></li>
+          </ul>
+        </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header id="page-top" class="header">
+        <div class="text-vertical-center">
+            <h1>Gracious Guest</h1>
+            <h3>Attempting to solve problems of the potluck party.</h3>
+            <br>
+            <a href="#about" class="btn btn-dark btn-lg">Find Out More</a>
+        </div>
+    </header>
+
+    <!-- About -->
+    <section id="about" class="about">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <h2>The Gracious Guest is an application to make planning group events easier.</h2>
+            <p class="lead">Follow the steps below and you'll have your event created in no time.</p>
+          </div>
+        </div> <!-- /.row -->
+      </div> <!-- /.container -->
+    </section>
+
+    <!-- Services -->
+    <!-- The circle icons use Font Awesome's stacked icon classes. For more information, visit http://fontawesome.io/examples/ -->
+    <section id="services" class="services bg-primary">
+      <div class="container">
+        <div class="row text-center">
+          <div class="col-lg-10 col-lg-offset-1">
+            <h2>How To Use This Application</h2>
+            <hr class="small">
+            <div class="row">
+              <div class="col-md-3 col-sm-6">
+                <div class="service-item">
+                  <span class="fa-stack fa-4x">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-cloud fa-stack-1x text-primary"></i>
+                  </span>
+                  <h4>
+                    <strong>Brainstorm Your Event</strong>
+                  </h4>
+                  <p>Planning an outdoor BBQ? Or going on a beach trip? Come up with the idea for your event.</p>
+                  <a href="#" class="btn btn-light">Step 1</a>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-sm-6">
+                <div class="service-item">
+                  <span class="fa-stack fa-4x">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-pencil fa-stack-1x text-primary"></i>
+                  </span>
+                  <h4>
+                    <strong>Create The Event</strong>
+                  </h4>
+                  <p>Using the application form below, fill out the title of your event, the location and the date.</p>
+                  <a href="#" class="btn btn-light">Step 2</a>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-sm-6">
+                <div class="service-item">
+                  <span class="fa-stack fa-4x">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-users fa-stack-1x text-primary"></i>
+                </span>
+                  <h4>
+                    <strong>Invite Your Guests</strong>
+                  </h4>
+                  <p>Share your event page with your guests. Once shared, guests can easily contribute to your event. </p>
+                  <a href="#" class="btn btn-light">Step 3</a>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-sm-6">
+                <div class="service-item">
+                  <span class="fa-stack fa-4x">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-envelope fa-stack-1x text-primary"></i>
+                  </span>
+                  <h4>
+                    <strong>Auto Notification</strong>
+                  </h4>
+                  <p>The day of your event, guests will be automatically reminded about the event and updated details.</p>
+                  <a href="#" class="btn btn-light">Step 4</a>
+                </div>
+              </div>
+            </div> <!-- /.row (nested) -->
+          </div> <!-- /.col-lg-10 -->
+        </div> <!-- /.row -->
+      </div> <!-- /.container -->
+    </section>
+
+    <!-- Callout -->
+    <aside class="callout">
+      <div class="text-vertical-center">
+        <h1>Ready to create your event?</h1>
+        <br>
+        <a href="#events" class="btn btn-lg btn-dark">Fill Out The Form</a>
       </div>
+    </aside>
 
+    <!-- Portfolio -->
+    <section id="events" class="events">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1 text-center">
+
+                    <ui-view></ui-view>
+
+                </div> <!-- /.col-lg-10 -->
+            </div> <!-- /.row -->
+        </div> <!-- /.container -->
+    </section>
+
+    <!-- Call to Action -->
+    <aside class="call-to-action bg-primary">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h3>The buttons below are impossible to resist.</h3>
+                    <a href="#" class="btn btn-lg btn-light">Click Me!</a>
+                    <a href="#" class="btn btn-lg btn-dark">Look at Me!</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Footer -->
+    <footer id="contact" class="contact">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10 col-lg-offset-1 text-center">
+            <h4><strong>The Gracious Guest</strong></h4>
+            <p>1133 15th St NW<br>Washington, DC 20005</p>
+            <ul class="list-unstyled">
+              <li><i class="fa fa-phone fa-fw"></i> (703) 599-4594</li>
+              <li><i class="fa fa-envelope-o fa-fw"></i>  <a href="mailto:andersenek@example.com">Questions for me?</a></li>
+            </ul>
+            <br>
+            <ul class="list-inline">
+              <li><a href="#"><i class="fa fa-facebook fa-fw fa-2x"></i></a></li>
+              <li><a href="#"><i class="fa fa-twitter fa-fw fa-2x"></i></a></li>
+              <li><a href="#"><i class="fa fa-instagram fa-fw fa-2x"></i></a></li>
+            </ul>
+            <hr class="small">
+            <p class="text-muted">Copyright &copy; The Gracious Guest 2015</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- View Templates -->
+
+
+      <script type="text/ng-template" id="/home.html">
+        <div class="page-header">
+          <h1>Gracious Guest Events</h1>
+        </div>
+
+        <div ng-repeat="event in events" ng-show="isLoggedIn()" class="event">
+        <span class='delete' ng-click="deleteEvent(event)">(x)</span>
+
+          <h4><a ng-show="event.title" href="#/events/{{ event._id }}">{{event.title}}</a><h4>
+          <p>Hosted by: {{event.author}}</p>
+          <h5>{{event.location}}</h5>
+          <h5>{{event.date}}</h5>
+          <a ng-show="event.title" href="#/events/{{ event._id }}" class="btn btn-sm btn-dark">More Details</a>
+          <!-- Find index of the array we are iterating through -->
+        </div>
+
+        <!-- Create a form that executes our addEvent $scope function -->
+        <form role="form" ng-show="isLoggedIn()" ng-submit="addEvent()" style="margin-top:30px;">
+          <div class="form-group">
+            <label for="title">Event Title:</label>
+            <input type="title" class="form-control" id="title" ng-model="title">
+          </div>
+          <div class="form-group">
+            <label for="location">Event Location:</label>
+            <input type="location" class="form-control" id="location" ng-model="location">
+          </div>
+          <div class="form-group">
+            <label for="date">Event Date:</label>
+            <input type="date" class="form-control" id="date" ng-model="date">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+
+        <div ng-hide="isLoggedIn()">
+          <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add an event.</h3>
+        </div>
+
+        </script>
+
+        <script type="text/ng-template" id="/events.html">
+          <div class="page-header">
+            <span class='delete' ng-click="deleteEvent(event._id)">(delete)</span>
+            <h3><a ng-show="event.title" href="#/events/{{ event._id }}">{{event.title}}</a><h3>
+            <p>Hosted by: {{event.author}}</p>
+            <h5>{{event.location}}</h5>
+            <h5>{{event.date}}</h5>
+          </div>
+
+          <div ng-repeat="comment in event.comments">
+              by {{comment.author}}
+            <span style="font-size:20px; margin-left:10px;">
+              {{comment.body}}
+            </span>
+          </div>
+
+          <form ng-submit="addComment()" style="margin-top:30px;" ng-show="isLoggedIn()">
+            <h3>Add a new comment</h3>
+
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Comment" ng-model="body"></input>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Post</button>
+          </form>
+
+          <div ng-hide="isLoggedIn()">
+            <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a comment.</h3>
+          </div>
+
+        </script>
+
+        <script type="text/ng-template" id="/register.html">
+          <div class="page-header">
+            <h1>Gracious Guest Events</h1>
+          </div>
+
+          <div ng-show="error" class="alert alert-danger row">
+            <span>{{ error.message }}</span>
+          </div>
+
+          <form ng-submit="register()"
+            style="margin-top:30px;">
+            <h3>Register</h3>
+
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Username" ng-model="user.username"></input>
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Password" ng-model="user.password"></input>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+          </form>
+        </script>
+
+      <script type="text/ng-template" id="/login.html">
+        <div class="page-header">
+          <h1>Gracious Guest Events</h1>
+        </div>
+
+        <div ng-show="error" class="alert alert-danger row">
+          <span>{{ error.message }}</span>
+        </div>
+
+        <form ng-submit="logIn()"
+          style="margin-top:30px;">
+          <h3>Log In</h3>
+
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Username" ng-model="user.username"></input>
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" placeholder="Password" ng-model="user.password"></input>
+          </div>
+          <button type="submit" class="btn btn-primary">Log In</button>
+        </form>
+      </script>
+
+
+
+    <!-- jQuery -->
+    <script src="javascripts/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="javascripts/bootstrap.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script>
+    // Closes the sidebar menu
+    $("#menu-close").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+
+    // Opens the sidebar menu
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+
+    // Scrolls to the selected menu item on the page
+    $(function() {
+      $('a[href*=#]:not([href=#])').click(function() {
+        if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') || location.hostname == this.hostname) {
+
+          var target = $(this.hash);
+          target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+          if (target.length) {
+            $('html,body').animate({
+              scrollTop: target.offset().top
+            }, 1000);
+            return false;
+           }
+        }
+      });
+    });
     </script>
 
-    <script type="text/ng-template" id="/register.html">
-  <div class="page-header">
-    <h1>Gracious Guest Events</h1>
-  </div>
+</body>
 
-  <div ng-show="error" class="alert alert-danger row">
-    <span>{{ error.message }}</span>
-  </div>
-
-  <form ng-submit="register()"
-    style="margin-top:30px;">
-    <h3>Register</h3>
-
-    <div class="form-group">
-      <input type="text" class="form-control" placeholder="Username" ng-model="user.username"></input>
-    </div>
-    <div class="form-group">
-      <input type="password" class="form-control" placeholder="Password" ng-model="user.password"></input>
-    </div>
-    <button type="submit" class="btn btn-primary">Register</button>
-  </form>
-</script>
-
-<script type="text/ng-template" id="/login.html">
-  <div class="page-header">
-    <h1>Gracious Guest Events</h1>
-  </div>
-
-  <div ng-show="error" class="alert alert-danger row">
-    <span>{{ error.message }}</span>
-  </div>
-
-  <form ng-submit="logIn()"
-    style="margin-top:30px;">
-    <h3>Log In</h3>
-
-    <div class="form-group">
-      <input type="text" class="form-control" placeholder="Username" ng-model="user.username"></input>
-    </div>
-    <div class="form-group">
-      <input type="password" class="form-control" placeholder="Password" ng-model="user.password"></input>
-    </div>
-    <button type="submit" class="btn btn-primary">Log In</button>
-  </form>
-  </script>
-
-  </body>
 </html>
