@@ -6,6 +6,7 @@ var EventSchema = new mongoose.Schema({
   location: String,
   date: String,
   author: String,
+  guests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Reference users invited to event, uses 'User' model
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] // Reference comments attached to this post id, uses 'Comment' model to make this work
 });
 

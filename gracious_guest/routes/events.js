@@ -47,7 +47,8 @@ router.post('/login', function(req, res, next){
   })(req, res, next);
 });
 
-router.get('/events', function(req, res, next) { // Get route for all events
+// Get route for all events
+router.get('/events', function(req, res, next) {
   Event.find(function(err, events){
     if(err){ return next(err); }
 
@@ -55,7 +56,8 @@ router.get('/events', function(req, res, next) { // Get route for all events
   });
 });
 
-router.post('/events', auth, function(req, res, next) { // Post route for events
+// Post route for events
+router.post('/events', auth, function(req, res, next) {
   var event = new Event(req.body);
   event.author = req.payload.username;
 
@@ -66,6 +68,7 @@ router.post('/events', auth, function(req, res, next) { // Post route for events
   });
 });
 
+// Validate event
 router.param('event', function(req, res, next, id) {
   var query = Event.findById(id); // Query DB to find post by id
 
@@ -78,7 +81,7 @@ router.param('event', function(req, res, next, id) {
   });
 });
 
-// Comment by id
+// Validate comment
 router.param('comment', function(req, res, next, id) {
   var query = Comment.findById(id);
 
@@ -142,6 +145,7 @@ router.put('/events/:event', function(req, res) {
   });
 });
 
+// Post Comment
 router.post('/events/:event/comments', auth, function(req, res, next) {
   var comment = new Comment(req.body);
   comment.event = req.event;
@@ -154,7 +158,23 @@ router.post('/events/:event/comments', auth, function(req, res, next) {
     req.event.save(function(err, event) { // Save comment to DB
       if(err){ return next(err); } // Catch any errors
 
-      res.json(comment);
+    res.json(comment);
+    });
+  });
+});
+
+// Delete Comment
+router.delete('/events/:event/:comment', auth, function(req, res, next) {
+  Comment.findById(req.params.comment, function (err, comment) {
+    console.log(comment);
+    event.comment.remove(function (err) {
+      if (!err) {
+        console.log("removed");
+        res.send("fail");
+      } else {
+        console.log(err);
+        res.send("success")
+      }
     });
   });
 });

@@ -54,7 +54,7 @@ app.config([
 }]); // End app.config
 
 // Factories
-app.factory('auth', ['$http', '$window', function($http, $window){
+app.factory('auth', ['$http', '$window', '$state', function($http, $window, $state){
 
   var auth = {};
 
@@ -100,7 +100,9 @@ app.factory('auth', ['$http', '$window', function($http, $window){
   };
 
   auth.logOut = function(){
-    $window.localStorage.removeItem('gracious-guest-token');
+    if($window.localStorage.removeItem('gracious-guest-token')){
+      $state.go('home'); // Redirect to home if logged out
+    };
   };
 
   return auth;
@@ -163,6 +165,17 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
     });
   };
 
+  o.deleteCommentFunc = function(event, comment) {
+    var index = event.comments.indexOf(comment);
+    console.log(index)
+    console.log(event.comments)
+    return $http.delete('/events/' + event._id + '/' + comment._id).success(function(event){ // Delete from server
+      event.comments.splice(index, 1); // Remove data from our event array
+    }).error(function(event){
+      console.log("this isn't quite working")
+    });
+  }
+
   return o;
   // End Service Body
 }]);
@@ -218,7 +231,8 @@ app.controller('MainCtrl', [
       });
 
       $scope.title = ''; // Set area to empty when done
-      $scope.link = ''; // Set area to empty when done
+      $scope.location = ''; // Set area to empty when done
+      $scope.date = ''; // Set area to empty when done
     };
 
     $scope.updateEvent = function(event){
@@ -264,6 +278,13 @@ app.controller('EventsCtrl', [
       }
     };
 
+    $scope.deleteComment = function(event, comment) {
+      console.log(event)
+      console.log(comment)
+      events.deleteCommentFunc(event, comment);
+
+    };
+
 }]); // End EventsCtrl controller
 
 app.controller('NavCtrl', [
@@ -278,10 +299,12 @@ app.controller('NavCtrl', [
 
 app.controller('HideCtrl', [
   '$scope',
+  '$state',
   'auth',
 
-  function($scope, auth){
+  function($scope, $state, auth){
     $scope.isLoggedIn = auth.isLoggedIn;
     $scope.currentUser = auth.currentUser;
     $scope.logOut = auth.logOut;
+    $scope.isStateHome = $state.is('home');
 }]); // End HideCtrl

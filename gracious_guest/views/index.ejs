@@ -56,8 +56,7 @@
 
             <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
             <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
-            <li ng-hide="isLoggedIn()"><a href="/#/login">Log In</a></li>
-            <li ng-hide="isLoggedIn()"><a href="/#/register">Register</a></li>
+            <li ng-hide="isLoggedIn()"><a class="page-scroll" href="#login">Log In/Register</a></li>
           </ul>
         </div> <!-- /.navbar-collapse -->
       </div> <!-- /.container-fluid -->
@@ -164,7 +163,8 @@
       </div>
     </aside>
 
-    <!-- Event -->
+    <!-- Event (must be logged in) -->
+    <section id="login">
     <section id="events" class="events">
         <div class="container">
             <div class="row">
@@ -176,9 +176,10 @@
             </div> <!-- /.row -->
         </div> <!-- /.container -->
     </section>
+    </section>
 
     <!-- Call to Action -->
-    <aside class="call-to-action bg-primary">
+    <aside class="call-to-action bg-primary" ng-controller="HideCtrl" ng-hide="isStateHome()">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -268,9 +269,7 @@
         <script type="text/ng-template" id="/events.html">
           <div class="page-header">
 
-
-            <a href="/#/events"><button type="button" class="btn btn-default btn-sm">Back</button></a>
-
+          <a href="/#/events"><button type="button" class="btn btn-default btn-sm">Back</button></a>
 
           <button type="button" class="btn btn-default btn-md">
             <span class='glyphicon glyphicon-pencil' ng-click="updateEvent(event)"></span>
@@ -287,6 +286,11 @@
           </div>
 
           <div ng-repeat="comment in event.comments">
+
+          <button type="button" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="deleteComment(event, comment)"></span>
+          </button>
+
               by {{comment.author}}
             <span style="font-size:20px; margin-left:10px;">
               {{comment.body}}
