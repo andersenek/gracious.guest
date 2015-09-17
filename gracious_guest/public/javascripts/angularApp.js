@@ -28,6 +28,16 @@ app.config([
           }]
         }
       })
+      .state('events/{id}/edit', {
+        url: '/events/{id}/edit',
+        templateUrl: '/editEvent.html',
+        controller: 'EditEventCtrl',
+        resolve: {
+          event: ['$stateParams', 'events', function($stateParams, events) {
+            return events.get($stateParams.id);
+          }]
+        }
+      })
       .state('login', {
         url: '/login',
         templateUrl: '/login.html',
@@ -138,7 +148,7 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
   };
 
   o.updateEvent = function(event){
-    return $http.put('/events/' + event._id + '/edit').success(function(event){ // Post to server
+    return $http.put('/events/' + event._id, event).success(function(event){ // Post to server
       console.log("this is working") // Remove data from our event array
     }).error(function(event){
       console.log("this isn't working")
@@ -146,9 +156,6 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
   }
 
   o.deleteEvent = function(event) {
-    console.log("trying to delete")
-    console.log(event)
-    console.log(o.events)
     var index = o.events.indexOf(event);
 
     return $http.delete('/events/' + event._id).success(function(event){ // Delete from server
@@ -169,7 +176,7 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
     var index = event.comments.indexOf(comment);
     console.log(index)
     console.log(event.comments)
-    return $http.delete('/events/' + event._id + '/' + comment._id).success(function(event){ // Delete from server
+    return $http.delete('/events/' + event._id + '/comments/' + comment._id).success(function(event, comment){ // Delete from server
       event.comments.splice(index, 1); // Remove data from our event array
     }).error(function(event){
       console.log("this isn't quite working")
@@ -287,6 +294,21 @@ app.controller('EventsCtrl', [
 
 }]); // End EventsCtrl controller
 
+app.controller('EditEventCtrl', [
+  '$scope',
+  '$state',
+  'events',
+  'event',
+  'auth',
+
+  function($scope, $state, events, event, auth){
+
+    $scope.event = event;
+    $scope.isLoggedIn = auth.isLoggedIn;
+
+
+}]); // End EventsCtrl controller
+
 app.controller('NavCtrl', [
   '$scope',
   'auth',
@@ -306,5 +328,7 @@ app.controller('HideCtrl', [
     $scope.isLoggedIn = auth.isLoggedIn;
     $scope.currentUser = auth.currentUser;
     $scope.logOut = auth.logOut;
+    $scope.state = $state;
     $scope.isStateHome = $state.is('home');
+    console.log($state.is('home'))
 }]); // End HideCtrl

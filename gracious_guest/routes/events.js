@@ -129,13 +129,13 @@ router.get('/events/:event', function(req, res) {
 //   });
 // });
 
-router.put('/events/:event', function(req, res) {
-    var event = req.event;
+router.put('/events/:event_id', function(req, res) {
+    var event = // find event in mongo db using ID     req.event; // Pass in the new event
     event = _.extend(event, req.body);
 
-    event.save(function(err) {
+    event.save(function(err) { // Save the new event
     if (err) {
-      return res.send('/event', {
+      return res.send('/event', { // Catch any errors
         errors: err.errors,
         event: event
       });
@@ -164,7 +164,7 @@ router.post('/events/:event/comments', auth, function(req, res, next) {
 });
 
 // Delete Comment
-router.delete('/events/:event/:comment', auth, function(req, res, next) {
+router.delete('/events/:event/comments/:comment', auth, function(req, res, next) {
   Comment.findById(req.params.comment, function (err, comment) {
     console.log(comment);
     event.comment.remove(function (err) {
