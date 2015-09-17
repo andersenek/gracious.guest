@@ -21,14 +21,11 @@ router.post('/register', function(req, res, next){
   }
 
   var user = new User();
-
   user.username = req.body.username;
-
   user.setPassword(req.body.password)
 
   user.save(function (err){
     if(err){ return next(err); }
-
     return res.json({token: user.generateJWT()}) // JWT generates when user is registered
   });
 });
@@ -118,16 +115,32 @@ router.get('/events/:event', function(req, res) {
 });
 
 // Update an event
-router.put("/events/:event", function(req, res){
-  console.log("trying to update")
-  Event.findById(req.params.id).then(function(event){
-    if(!event) return error(res, "not found");
-    event.updateAttributes(req.body).then(function(updatedEvent){
-      res.json(updatedEvent);
-    });
-  });
-});
 
+// router.put("/events/:event", function(req, res){
+//   console.log("trying to update")
+//   Event.findById(req.params.id).then(function(event){
+//     if(!event) return error(res, "not found");
+//     event.updateAttributes(req.body).then(function(updatedEvent){
+//       res.json(updatedEvent);
+//     });
+//   });
+// });
+
+router.put('/events/:event', function(req, res) {
+    var event = req.event;
+    event = _.extend(event, req.body);
+
+    event.save(function(err) {
+    if (err) {
+      return res.send('/event', {
+        errors: err.errors,
+        event: event
+      });
+    } else {
+      res.json(event);
+    }
+
+});
 
 router.post('/events/:event/comments', auth, function(req, res, next) {
   var comment = new Comment(req.body);

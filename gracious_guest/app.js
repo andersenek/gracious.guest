@@ -17,7 +17,7 @@ require('./config/passport'); // Require config passport.js
 mongoose.connect('mongodb://localhost/events'); // DB path
 
 
-var routes = require('./routes/index');
+var routes = require('./routes/events');
 var users = require('./routes/users');
 
 var app = express();

@@ -136,7 +136,7 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
   };
 
   o.updateEvent = function(event){
-    return $http.get('/events/' + event._id + '/edit').success(function(event){ // Post to server
+    return $http.put('/events/' + event._id + '/edit').success(function(event){ // Post to server
       console.log("this is working") // Remove data from our event array
     }).error(function(event){
       console.log("this isn't working")
@@ -204,6 +204,7 @@ app.controller('MainCtrl', [
 
     $scope.events = events.events; // Bind the $scope.events variable in our controller to the events array in our service
     $scope.isLoggedIn = auth.isLoggedIn;
+    $scope.currentUser = auth.currentUser;
 
     $scope.addEvent = function(){ // Allow user to add a event
       if(!$scope.title || $scope.title === '') {  // Prevent the user from entering a blank title
@@ -274,3 +275,13 @@ app.controller('NavCtrl', [
     $scope.currentUser = auth.currentUser;
     $scope.logOut = auth.logOut;
 }]); // End NavCtrl
+
+app.controller('HideCtrl', [
+  '$scope',
+  'auth',
+
+  function($scope, auth){
+    $scope.isLoggedIn = auth.isLoggedIn;
+    $scope.currentUser = auth.currentUser;
+    $scope.logOut = auth.logOut;
+}]); // End HideCtrl
