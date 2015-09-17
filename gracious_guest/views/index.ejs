@@ -224,6 +224,7 @@
 
         <div ng-repeat="event in events" ng-show="isLoggedIn()" class="event">
         <span class='delete' ng-click="deleteEvent(event)">(x)</span>
+        <span class='update' ng-click="updateEvent(event)">(edit)</span>
 
           <h4><a ng-show="event.title" href="#/events/{{ event._id }}">{{event.title}}</a><h4>
           <p>Hosted by: {{event.author}}</p>
@@ -260,7 +261,7 @@
 
         <script type="text/ng-template" id="/events.html">
           <div class="page-header">
-            <span class='delete' ng-click="deleteEvent(event._id)">(delete)</span>
+            <span class='delete' ng-click="deleteEvent(event)">(delete)</span>
             <a href="/#/events">Back</a>
             <h3>{{event.title}}<h3>
             <p>Hosted by: {{event.author}}</p>

@@ -96,13 +96,15 @@ router.param('comment', function(req, res, next, id) {
 
 // Delete an event
 router.delete('/events/:event', function (req, res){
-  return Event.findById(req.params.id, function (err, event) {
-    return event.remove(function (err) {
+  Event.findById(req.params.event, function (err, e) {
+    console.log(e);
+    e.remove(function (err) {
       if (!err) {
         console.log("removed");
-        return res.send('');
+        res.send("fail");
       } else {
         console.log(err);
+        res.send("success")
       }
     });
   });
@@ -114,6 +116,18 @@ router.get('/events/:event', function(req, res) {
     res.json(event);
   });
 });
+
+// Update an event
+router.put("/events/:event", function(req, res){
+  console.log("trying to update")
+  Event.findById(req.params.id).then(function(event){
+    if(!event) return error(res, "not found");
+    event.updateAttributes(req.body).then(function(updatedEvent){
+      res.json(updatedEvent);
+    });
+  });
+});
+
 
 router.post('/events/:event/comments', auth, function(req, res, next) {
   var comment = new Comment(req.body);
