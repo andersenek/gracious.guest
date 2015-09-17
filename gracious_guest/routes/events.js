@@ -139,7 +139,7 @@ router.put('/events/:event', function(req, res) {
     } else {
       res.json(event);
     }
-
+  });
 });
 
 router.post('/events/:event/comments', auth, function(req, res, next) {
