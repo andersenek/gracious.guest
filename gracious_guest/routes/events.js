@@ -164,16 +164,18 @@ router.post('/events/:event/comments', auth, function(req, res, next) {
 });
 
 // Delete Comment
-router.delete('/events/:event/comments/:comment', auth, function(req, res, next) {
+router.delete('/events/:event/comments/:comment', function(req, res) {
   Comment.findById(req.params.comment, function (err, comment) {
-    console.log(comment);
-    event.comment.remove(function (err) {
+    event = req.event;
+    var index = event.comments.indexOf(comment._id);
+
+    comment.remove(function (err) {
       if (!err) {
         console.log("removed");
-        res.send("fail");
+        res.send(comment);
       } else {
         console.log(err);
-        res.send("success")
+        res.send("hello")
       }
     });
   });
