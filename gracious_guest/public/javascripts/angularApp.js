@@ -174,10 +174,8 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
   o.deleteCommentFunc = function(event, comment) {
     var index = event.comments.indexOf(comment);
     console.log(index)
-    console.log(event.comments)
 
     return $http.delete('/events/' + event._id + '/comments/' + comment._id).success(function(comment){ // Delete from server
-      console.log(comment)
       event.comments.splice(index, 1); // Remove data from our event array
     }).error(function(event){
       console.log("this isn't quite working")

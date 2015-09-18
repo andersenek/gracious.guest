@@ -125,8 +125,12 @@ router.delete('/events/:event', function (req, res){
 
 // Show an event and comments
 router.get('/events/:event', function(req, res) {
-  req.event.populate('comments', function(err, event) { // Populate event with comments
-    res.json(event);
+  Event
+  .findById(req.params.event)
+  .populate('comments')
+  .populate('users')
+  .exec(function(err, data){
+      res.json(data)
   });
 });
 
@@ -166,7 +170,8 @@ router.delete('/events/:event/comments/:comment', function(req, res) {
   Comment.findById(req.params.comment, function (err, comment) {
     event = req.event;
     var index = event.comments.indexOf(comment._id);
-
+    console.log(event)
+    console.log("comment index", event.comments.indexOf(comment._id))
     comment.remove(function (err) {
       if (!err) {
         console.log("removed");
@@ -195,7 +200,6 @@ router.post('/events/:event/users', auth, function(req, res, next) {
       console.log("an error")
       res.send(err);
     }
-    
     console.log("user is", user)
 
     req.event.users.push(user); // Add user to event

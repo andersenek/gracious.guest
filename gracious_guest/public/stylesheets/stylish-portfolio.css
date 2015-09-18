@@ -181,11 +181,16 @@ hr.small {
 
 /* Events */
 
+.event a {
+    color: #000;
+}
 .event {
     display: inline-block;
-    border: 1px solid #000;
+    border: 1px solid #D0D0D0;
     padding: 2em;
     margin: 1em;
+    background: #097056;
+    color: #fff;
 }
 
 /* Comments */
