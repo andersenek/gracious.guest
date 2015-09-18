@@ -181,16 +181,30 @@ router.delete('/events/:event/comments/:comment', function(req, res) {
 
 // Post User
 router.post('/events/:event/users', auth, function(req, res, next) {
-  var user = new User(req.username);
-  user.event = req.event;
-  user.author = req.payload.username;
+  var user = new User(req.body);
+  console.log(req.event)
+  console.log("********************")
+  console.log(req.body)
+  console.log(req.body.username)
+  console.log("*********USER BELOW***********")
+  console.log(user.username)
+  var sendUser = user.username
 
   user.save(function(err, user){
-    if(err){ return next(err); }
+    if(err){
+      console.log("an error")
+      res.send(err);
+    }
+    
+    console.log("user is", user)
 
-    req.event.users.push(user); // Add comment to event
-    req.event.save(function(err, event) { // Save comment to DB
-      if(err){ return next(err); } // Catch any errors
+    req.event.users.push(user); // Add user to event
+
+    req.event.save(function(err, event) { // Save user to DB
+      if(err){
+        console.log("another error")
+        res.send(err);
+      } // Catch any errors
 
     res.json(user);
     });

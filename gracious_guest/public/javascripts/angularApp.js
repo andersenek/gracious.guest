@@ -105,7 +105,6 @@ app.factory('auth', ['$http', '$window', '$state', function($http, $window, $sta
   auth.logIn = function(user){ // Take user object
     return $http.post('/login', user).success(function(data){ // Pass in with login
       auth.saveToken(data.token); // Save if successful
-      console.log(data.token)
     });
   };
 
@@ -189,7 +188,8 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
     console.log(username)
     return $http.post('/events/' + id + '/users', username, {
       headers: {Authorization: 'Bearer '+auth.getToken()}
-    }).error(function(event){
+    }).error(function(username){
+      console.log(username)
       console.log("this isn't quite working")
     });
   };
@@ -300,11 +300,11 @@ app.controller('EventsCtrl', [
       }
       events.addUser(event._id, {
         username: $scope.username,
-        author: 'user',
       }).success(function(username) {
         $scope.event.users.push(username); // Comment will post to an event
       });
       $scope.username = ''; // Set area to empty when done
+      console.log("event from function is: ", event)
     };
 
 }]); // End EventsCtrl controller

@@ -269,32 +269,32 @@
 
         <script type="text/ng-template" id="/events.html">
 
-        <div class="col-md-8 col-sm-6" ng-show="isLoggedIn()">
+        <div class="col-md-8 col-sm-6">
 
           <h2>{{event.title}}</h2>
           <h4>Hosted by: {{event.author}}</h4>
           <h4>Location: {{event.location}}</h4>
           <h5>{{event.date | date:'MM-dd-yyyy'}}</h5>
 
-          <a href="/#/events"><button type="button" class="btn btn-default btn-sm">Back</button></a>
+          <a href="/#/events" ng-show="isLoggedIn()"><button type="button" class="btn btn-default btn-sm">Back</button></a>
 
-          <button type="button" class="btn btn-default btn-md">
+          <button type="button" class="btn btn-default btn-md" ng-show="isLoggedIn()">
             <a class='glyphicon glyphicon-pencil' href="#/events/{{ event._id }}/edit"></a>
           </button>
 
-          <button type="button" class="btn btn-default btn-md">
+          <button type="button" class="btn btn-default btn-md" ng-show="isLoggedIn()">
             <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="deleteEvent(event)"></span>
           </button>
 
           <h3>What needs to be brought?</h3>
-            <div ng-repeat="comment in event.comments" ng-show="isLoggedIn()" class="comment">
+            <div ng-repeat="comment in event.comments" class="comment">
 
             <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="deleteComment(event, comment)" id="delete-button"></span>
 
             <h4>{{comment.body}}</h4>
             <h5>by {{comment.author}}</h5>
 
-          </div>
+            </div>
 
         <form ng-submit="addComment()" ng-show="isLoggedIn()" class="comment-form">
           <h3>Add a new comment</h3>
@@ -308,20 +308,27 @@
 
         </div>  <!-- End Column -->
 
-        <div class="col-md-4 col-sm-6" ng-show="isLoggedIn()">
-        <form ng-submit="addUser()" ng-show="isLoggedIn()">
+        <div class="col-md-4 col-sm-6">
+        <form ng-submit="addUser()">
           <h3>Invite your guests</h3>
 
           <div class="form-group">
             <input type="text" class="form-control" placeholder="Username to invite" ng-model="username"></input>
           </div>
 
-          <button type="submit" class="btn btn-primary">Invite</button>
+          <button type="submit" class="btn btn-primary green" ng-show="isLoggedIn()">Invite</button>
         </form>
+
+        <div ng-repeat="user in event.users track by $index" class="user">
+
+        <h4>{{user.username}}</h4>
+
+        </div>
+
         </div> <!-- End Column -->
 
-        <div ng-hide="isLoggedIn()">
-          <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a comment.</h3>
+        <div class="col-md-12 col-sm-12" ng-hide="isLoggedIn()">
+          <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a comment or invite guests.</h3>
         </div>
 
         </div> <!-- End Column -->

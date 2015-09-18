@@ -194,16 +194,22 @@ hr.small {
     display: inline-block;
 }
 
+.comment, .user {
+  margin: .5em 0em;
+  padding: 1em;
+  color: #fff;
+  border: 1.5px solid rgba(152, 158, 170, 0.5);
+}
 .comment {
     background: #337AB7;
-    margin: .5em 0em;
-    padding: 1em;
-    color: #fff;
-    border: 1.5px solid rgba(152, 158, 170, 0.5);
 }
 
 #delete-button {
     float: right;
+}
+
+.user {
+    background: #097056;
 }
 
 /* Callout */
