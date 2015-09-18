@@ -148,6 +148,8 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
   };
 
   o.updateEvent = function(event){
+    console.log("update event is: ", event)
+
     return $http.put('/events/' + event._id, event).success(function(event){ // Post to server
       console.log("this is working") // Remove data from our event array
     }).error(function(event){
@@ -183,7 +185,16 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
     }).error(function(event){
       console.log("this isn't quite working")
     });
-  }
+  };
+
+  o.addUser = function(id, username) {
+    console.log(username)
+    return $http.post('/events/' + id + '/users', username, {
+      headers: {Authorization: 'Bearer '+auth.getToken()}
+    }).error(function(event){
+      console.log("this isn't quite working")
+    });
+  };
 
   return o;
   // End Service Body
@@ -244,15 +255,9 @@ app.controller('MainCtrl', [
       $scope.date = ''; // Set area to empty when done
     };
 
-    $scope.updateEvent = function(event){
-      events.updateEvent(event)
-    }
-
     $scope.deleteEvent = function(event) {
       events.deleteEvent(event)
     }
-
-
 
 }]); // End MainCtrl controller
 
@@ -288,10 +293,20 @@ app.controller('EventsCtrl', [
     };
 
     $scope.deleteComment = function(event, comment) {
-      console.log(event)
-      console.log(comment)
       events.deleteCommentFunc(event, comment);
+    };
 
+    $scope.addUser = function(){
+      if($scope.username === '') { // Prevent the user from entering a blank body
+        return;
+      }
+      events.addUser(event._id, {
+        username: $scope.username,
+        author: 'user',
+      }).success(function(username) {
+        $scope.event.users.push(username); // Comment will post to an event
+      });
+      $scope.username = ''; // Set area to empty when done
     };
 
 }]); // End EventsCtrl controller
@@ -308,6 +323,13 @@ app.controller('EditEventCtrl', [
     $scope.event = event;
     $scope.isLoggedIn = auth.isLoggedIn;
 
+
+    $scope.update = function(){
+      console.log("An event is:", event)
+      // update defined as custom method in service, still have to pass ID to method
+      events.updateEvent(event);
+      //$state.go('/events/');
+    };
 
 }]); // End EventsCtrl controller
 
@@ -331,6 +353,4 @@ app.controller('HideCtrl', [
     $scope.currentUser = auth.currentUser;
     $scope.logOut = auth.logOut;
     $scope.state = $state;
-    $scope.isStateHome = $state.is('home');
-    console.log($state.is('home'))
 }]); // End HideCtrl

@@ -94,6 +94,19 @@ router.param('comment', function(req, res, next, id) {
   });
 });
 
+// Validate user(guest)
+router.param('user', function(req, res, next, id) {
+  var query = User.findById(id);
+
+  query.exec(function (err, username){
+    if (err) { return next(err); }
+    if (!username) { return next(new Error('can\'t find user')); }
+
+    req.username = username;
+    return next();
+  });
+});
+
 // Delete an event
 router.delete('/events/:event', function (req, res){
   Event.findById(req.params.event, function (err, e) {
@@ -130,7 +143,8 @@ router.get('/events/:event', function(req, res) {
 // });
 
 router.put('/events/:event_id', function(req, res) {
-    var event = // find event in mongo db using ID     req.event; // Pass in the new event
+    var event = Event.findById(req.params.id);
+    // find event in mongo db using ID     req.event; // Pass in the new event
     event = _.extend(event, req.body);
 
     event.save(function(err) { // Save the new event
@@ -140,7 +154,7 @@ router.put('/events/:event_id', function(req, res) {
         event: event
       });
     } else {
-      res.json(event);
+      res.send("update is not working");
     }
   });
 });
@@ -177,6 +191,24 @@ router.delete('/events/:event/comments/:comment', function(req, res) {
         console.log(err);
         res.send("hello")
       }
+    });
+  });
+});
+
+// Post User
+router.post('/events/:event/users', auth, function(req, res, next) {
+  var user = new User(req.username);
+  user.event = req.event;
+  user.author = req.payload.username;
+
+  user.save(function(err, user){
+    if(err){ return next(err); }
+
+    req.event.users.push(user); // Add comment to event
+    req.event.save(function(err, event) { // Save comment to DB
+      if(err){ return next(err); } // Catch any errors
+
+    res.json(user);
     });
   });
 });

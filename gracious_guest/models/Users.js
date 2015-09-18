@@ -6,7 +6,8 @@ var jwt = require('jsonwebtoken'); // Require JSON web token
 var UserSchema = new mongoose.Schema({
   username: {type: String, lowercase: true, unique: true}, // Unique string for a username, lowercase
   hash: String, // Since we don't want to store our passwords in plain text, we'll need a field for storing the hash of the password
-  salt: String // We will generate a random salt to every user's password; extra level of security
+  salt: String, // We will generate a random salt to every user's password; extra level of security
+  event: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }]
 });
 
 UserSchema.methods.setPassword = function(password){ // Random salt string

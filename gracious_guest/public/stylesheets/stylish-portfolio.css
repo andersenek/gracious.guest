@@ -188,6 +188,24 @@ hr.small {
     margin: 1em;
 }
 
+/* Comments */
+
+.comment button, .comment h4, .comment h5 {
+    display: inline-block;
+}
+
+.comment {
+    background: #337AB7;
+    margin: .5em 0em;
+    padding: 1em;
+    color: #fff;
+    border: 1.5px solid rgba(152, 158, 170, 0.5);
+}
+
+#delete-button {
+    float: right;
+}
+
 /* Callout */
 
 .callout {
