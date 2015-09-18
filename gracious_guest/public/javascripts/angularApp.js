@@ -148,9 +148,7 @@ app.factory('events', ['$http', 'auth', function($http, auth){ // Inject http an
   };
 
   o.updateEvent = function(event){
-    console.log("update event is: ", event)
-
-    return $http.put('/events/' + event._id, event).success(function(event){ // Post to server
+    return $http.put('/events/' + event._id, {event}).success(function(event){ // Post to server
       console.log("this is working") // Remove data from our event array
     }).error(function(event){
       console.log("this isn't working")
@@ -314,11 +312,12 @@ app.controller('EventsCtrl', [
 app.controller('EditEventCtrl', [
   '$scope',
   '$state',
+  '$location',
   'events',
   'event',
   'auth',
 
-  function($scope, $state, events, event, auth){
+  function($scope, $state, $location, events, event, auth){
 
     $scope.event = event;
     $scope.isLoggedIn = auth.isLoggedIn;
@@ -326,21 +325,24 @@ app.controller('EditEventCtrl', [
 
     $scope.update = function(){
       console.log("An event is:", event)
-      // update defined as custom method in service, still have to pass ID to method
-      events.updateEvent(event);
-      //$state.go('/events/');
+      if(events.updateEvent(event)) {
+        $location.path("/events/" + event._id);
+        //$state.go('events'); // Redirect to home if deleted
+      }
     };
 
 }]); // End EventsCtrl controller
 
 app.controller('NavCtrl', [
   '$scope',
+  '$state',
   'auth',
 
-  function($scope, auth){
+  function($scope, $state, auth){
     $scope.isLoggedIn = auth.isLoggedIn;
     $scope.currentUser = auth.currentUser;
     $scope.logOut = auth.logOut;
+    $scope.state = $state;
 }]); // End NavCtrl
 
 app.controller('HideCtrl', [

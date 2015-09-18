@@ -132,29 +132,13 @@ router.get('/events/:event', function(req, res) {
 
 // Update an event
 
-// router.put("/events/:event", function(req, res){
-//   console.log("trying to update")
-//   Event.findById(req.params.id).then(function(event){
-//     if(!event) return error(res, "not found");
-//     event.updateAttributes(req.body).then(function(updatedEvent){
-//       res.json(updatedEvent);
-//     });
-//   });
-// });
-
 router.put('/events/:event_id', function(req, res) {
-    var event = Event.findById(req.params.id);
-    // find event in mongo db using ID     req.event; // Pass in the new event
-    event = _.extend(event, req.body);
 
-    event.save(function(err) { // Save the new event
+  Event.update({ _id: req.params.event_id} , { $set: req.body.event }, { multi: false }, function(err, updatedTitle) {
     if (err) {
-      return res.send('/event', { // Catch any errors
-        errors: err.errors,
-        event: event
-      });
+      return res.send(err)
     } else {
-      res.send("update is not working");
+      res.send(updatedTitle);
     }
   });
 });

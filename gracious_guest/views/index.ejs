@@ -49,8 +49,9 @@
           <ul class="nav navbar-nav navbar-right">
             <li class="hidden"><a href="#page-top" id="page-top"></a></li>
 
-            <li><a class="page-scroll" href="#about">About</a></li>
-            <li><a class="page-scroll" href="#services">How To</a></li>
+            <li ng-hide="state.current.name !== 'home'"><a class="page-scroll" href="#about">About</a></li>
+            <li ng-hide="state.current.name !== 'home'"><a class="page-scroll" href="#services">How To</a></li>
+            <li ng-hide="state.current.name == 'home'"><a class="page-scroll" href="#home">Home</a></li>
             <li><a class="page-scroll" href="#events">Events</a></li>
             <li><a class="page-scroll" href="#contact">Contact</a></li>
 
@@ -73,7 +74,7 @@
     </header>
 
     <!-- About -->
-    <section id="about" class="about">
+    <section id="about" class="about" ng-controller="HideCtrl" ng-hide="state.current.name !== 'home'">
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-center">
@@ -86,7 +87,7 @@
 
     <!-- Services -->
     <!-- The circle icons use Font Awesome's stacked icon classes. For more information, visit http://fontawesome.io/examples/ -->
-    <section id="services" class="services bg-primary">
+    <section id="services" class="services bg-primary" ng-controller="HideCtrl" ng-hide="state.current.name !== 'home'">
       <div class="container">
         <div class="row text-center">
           <div class="col-lg-10 col-lg-offset-1">
@@ -235,7 +236,7 @@
 
           <h4><a ng-show="event.title" href="#/events/{{ event._id }}">{{event.title}}</a><h4>
           <p>Hosted by: {{event.author}}</p>
-          <h5>{{event.location}}</h5>
+          <h5>Location: {{event.location}}</h5>
           <h5>{{event.date | date:'MM-dd-yyyy'}}</h5>
           <a ng-show="event.title" href="#/events/{{ event._id }}" class="btn btn-sm btn-dark">More Details</a>
           <!-- Find index of the array we are iterating through -->
@@ -272,7 +273,7 @@
 
           <h2>{{event.title}}</h2>
           <h4>Hosted by: {{event.author}}</h4>
-          <h5>{{event.location}}</h5>
+          <h4>Location: {{event.location}}</h4>
           <h5>{{event.date | date:'MM-dd-yyyy'}}</h5>
 
           <a href="/#/events"><button type="button" class="btn btn-default btn-sm">Back</button></a>
@@ -330,7 +331,7 @@
 
       <script type="text/ng-template" id="/editEvent.html">
         <div class="page-header">
-          <h1>Gracious Guest Events</h1>
+          <h1>{{ event.title }}</h1>
           <a href="/#/events/{{ event._id }}"><button type="button" class="btn btn-default btn-sm">Back</button></a>
         </div>
 
